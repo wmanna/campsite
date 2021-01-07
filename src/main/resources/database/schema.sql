@@ -6,3 +6,14 @@ CREATE TABLE IF NOT EXISTS campsite.reservations (
     reservation_date timestamp not null,
     PRIMARY KEY (id)
 );
+
+CREATE TABLE IF NOT EXISTS campsite.resource_locks (
+    id varchar not null,
+    locked boolean not null,
+    lock_timestamp timestamp not null,
+    PRIMARY KEY (id)
+);
+
+TRUNCATE TABLE campsite.resource_locks;
+
+INSERT INTO campsite.resource_locks(id, locked, lock_timestamp) VALUES('RESERVATION_LOCK', false, now())

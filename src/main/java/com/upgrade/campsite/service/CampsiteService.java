@@ -2,6 +2,7 @@ package com.upgrade.campsite.service;
 
 import com.upgrade.campsite.dto.ReservationDto;
 import com.upgrade.campsite.entity.Reservation;
+import com.upgrade.campsite.entity.ResourceLock;
 import com.upgrade.campsite.repository.ReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,16 +16,33 @@ public class CampsiteService {
     @Autowired
     private ReservationRepository reservationRepository;
 
+    @Autowired
+    private ResourceLockService resourceLockService;
+
     public Optional<Reservation> getReservationById(String id) {
         return reservationRepository.findById(id);
     }
 
     public Reservation book(ReservationDto reservationDto) {
 
-        Reservation reservation = new Reservation();
+        ResourceLock lock = resourceLockService.acquireLock();
+
+        Reservation reservation = reservationRepository.findByCode(reservationDto.getReservationCode());
+
+        if (Objects.isNull(reservation)) {
+            reservation = new Reservation();
+        } else {
+            resourceLockService.release(lock);
+            throw new RuntimeException("Reservation code already used or invalid.");
+        }
+
         reservation.setReservationDate(LocalDateTime.now());
-        reservation.setCode("21R" + Math.random());
-        return reservationRepository.save(reservation);
+        reservation.setCode(reservationDto.getReservationCode());
+        reservation = reservationRepository.save(reservation);
+
+        resourceLockService.release(lock);
+
+        return reservation;
 
     }
 

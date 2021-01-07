@@ -9,4 +9,7 @@ public class ReservationDto {
     private String userEmailAddress;
     private String userFullName;
 
+    public String getReservationCode() {
+        return reservationCode;
+    }
 }
