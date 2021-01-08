@@ -18,6 +18,12 @@ public class Reservation {
     @Column(name = "reservation_date")
     private LocalDateTime reservationDate;
 
+    @Column(name = "arrival_date")
+    private LocalDateTime arrivalDate;
+
+    @Column(name = "departure_date")
+    private LocalDateTime departureDate;
+
     public String getCode() {
         return code;
     }
@@ -30,4 +36,11 @@ public class Reservation {
         this.reservationDate = reservationDate;
     }
 
+    public void setArrivalDate(LocalDateTime arrivalDate) {
+        this.arrivalDate = arrivalDate;
+    }
+
+    public void setDepartureDate(LocalDateTime departureDate) {
+        this.departureDate = departureDate;
+    }
 }
