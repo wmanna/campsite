@@ -25,4 +25,8 @@ public class ResourceLock {
     public void setLockTimestamp(LocalDateTime lockTimestamp) {
         this.lockTimestamp = lockTimestamp;
     }
+
+    public LocalDateTime getLockTimestamp() {
+        return lockTimestamp;
+    }
 }
