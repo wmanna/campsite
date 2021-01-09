@@ -36,8 +36,18 @@ public class ReservationService {
     @Autowired
     private ResourceLockService resourceLockService;
 
-    public Reservation getReservationByCode(String code) {
-        return reservationRepository.findByCode(code);
+    public Reservation getReservationByCode(String code) throws ApiErrorException {
+
+        if (Objects.isNull(code)) {
+            throw new ApiErrorException(Constant.REQUIRED_RESERVATION_CODE, Constant.REQUIRED_RESERVATION_CODE_MSG);
+        }
+
+        Reservation reservation = reservationRepository.findByCode(code);
+        if (Objects.isNull(reservation)) {
+            throw new ApiErrorException(Constant.RESERVATION_NOT_FOUND_CODE, Constant.RESERVATION_NOT_FOUND_MSG);
+        }
+
+        return reservation;
     }
 
     /* Creates or modify a reservation and returns a Reservation entity that contains the code.
@@ -52,26 +62,24 @@ public class ReservationService {
 
         try {
 
-            if (!Objects.isNull(dto.getReservationCode())) {
-                reservation = reservationRepository.findByCode(dto.getReservationCode());
-                if (Objects.isNull(reservation)) {
-                    throw new ApiErrorException(Constant.INVALID_RESERVATION_CODE, Constant.INVALID_RESERVATION_CODE_MSG);
-                }
+            if (!Objects.isNull(dto.getReservationCode())) { // Modify
+               reservation = getReservationByCode(dto.getReservationCode());
 
             } else {
-                reservation = new Reservation();
+                reservation = new Reservation(); // Create new
                 reservation.setCode(getNewReservationCode(dto));
             }
 
             validateDates(dto);
+
             reservation.setReservationDate(LocalDateTime.now());
             reservation.setArrivalDate(dto.getArrivalDate().atStartOfDay());
             reservation.setDepartureDate(dto.getDepartureDate().atStartOfDay());
 
             reservation = reservationRepository.save(reservation);
-            dto.setReservationCode(reservation.getCode());
 
             // Update calendar
+            dto.setReservationCode(reservation.getCode());
             reservationCalendarService.updateCalendar(dto);
 
             return reservation;
@@ -79,6 +87,17 @@ public class ReservationService {
         } finally {
             resourceLockService.release(lock);
         }
+
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void cancelReservation(ReservationDto dto) throws ApiErrorException {
+
+        Reservation reservation = this.getReservationByCode(dto.getReservationCode());
+        reservation.setCancellationDate(LocalDateTime.now());
+        reservationRepository.save(reservation);
+        dto.setCancellation(true);
+        reservationCalendarService.updateCalendar(dto);
 
     }
 
@@ -121,7 +140,7 @@ public class ReservationService {
     }
 
     private List<Reservation> findReservationsBetweenDates(LocalDate beginDate, LocalDate endDate) {
-        return reservationRepository.findByArrivalDateGreaterThanEqualAndArrivalDateLessThanEqualOrDepartureDateGreaterThanEqualAndDepartureDateLessThanEqual(beginDate.atStartOfDay(), beginDate.atStartOfDay(), endDate.atStartOfDay(), endDate.atStartOfDay());
+        return reservationRepository.findByArrivalDateGreaterThanEqualAndArrivalDateLessThanEqualAndCancellationDateIsNullOrDepartureDateGreaterThanEqualAndDepartureDateLessThanEqualAndCancellationDateIsNull(beginDate.atStartOfDay(), beginDate.atStartOfDay(), endDate.atStartOfDay(), endDate.atStartOfDay());
     }
 
 }
