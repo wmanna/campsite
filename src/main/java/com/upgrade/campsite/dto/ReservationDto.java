@@ -22,4 +22,8 @@ public class ReservationDto {
     public LocalDate getDepartureDate() {
         return departureDate;
     }
+
+    public void setReservationCode(String reservationCode) {
+        this.reservationCode = reservationCode;
+    }
 }

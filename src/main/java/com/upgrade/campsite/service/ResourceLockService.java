@@ -25,6 +25,8 @@ public class ResourceLockService {
     @Autowired
     ResourceLockRepository resourceLockRepository;
 
+    /* This method provides an exclusive lock which prevents dirty reads and writes
+    even in distributed system with multiple instances. The lock has a default ttl. */
     @Transactional
     public ResourceLock acquireLock() {
 
@@ -44,6 +46,7 @@ public class ResourceLockService {
         return lock.getLockTimestamp().isAfter(LocalDateTime.now().minusMinutes(reservationLockTtl));
     }
 
+    /* This method releases a given lock received as parameter. */
     public void release(ResourceLock lock) {
 
         if (!Objects.isNull(lock)) {

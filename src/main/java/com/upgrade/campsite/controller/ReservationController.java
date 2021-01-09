@@ -3,25 +3,23 @@ package com.upgrade.campsite.controller;
 import com.upgrade.campsite.dto.ReservationDto;
 import com.upgrade.campsite.entity.Reservation;
 import com.upgrade.campsite.exception.ApiErrorException;
-import com.upgrade.campsite.service.CampsiteReservationService;
+import com.upgrade.campsite.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 public class ReservationController {
 
     @Autowired
-    private CampsiteReservationService campsiteService;
+    private ReservationService campsiteService;
 
     @PostMapping("/campsite")
     public Reservation bookReservation(@RequestBody ReservationDto reservationDto) throws ApiErrorException {
-        return campsiteService.getNewReservation(reservationDto);
+        return campsiteService.createOrModifyReservation(reservationDto);
     }
 
     @GetMapping("/campsite/details")
-    public Optional<Reservation> getReservationDetails(@RequestParam String id) {
-        return campsiteService.getReservationById(id);
+    public Reservation getReservationDetailsByCode(@RequestParam String code) {
+        return campsiteService.getReservationByCode(code);
     }
 }
