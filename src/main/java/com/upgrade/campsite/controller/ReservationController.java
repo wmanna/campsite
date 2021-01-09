@@ -19,7 +19,13 @@ public class ReservationController {
     }
 
     @GetMapping("/campsite/details")
-    public Reservation getReservationDetailsByCode(@RequestParam String code) {
+    public Reservation getReservationDetailsByCode(@RequestParam String code) throws ApiErrorException {
         return campsiteService.getReservationByCode(code);
     }
+
+    @DeleteMapping("/campsite")
+    public void cancelReservation(@RequestBody ReservationDto reservationDto) throws ApiErrorException {
+        campsiteService.cancelReservation(reservationDto);
+    }
+
 }

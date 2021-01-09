@@ -11,5 +11,5 @@ import java.util.List;
 public interface ReservationCalendarRepository extends CrudRepository<ReservationCalendar, String> {
 
     List<ReservationCalendar> findByCalendarDateGreaterThanEqualAndCalendarDateLessThanEqual(LocalDate beginDate, LocalDate endDate);
-
+    void deleteByReservationCode(String reservationCode);
 }

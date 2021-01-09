@@ -54,14 +54,19 @@ public class CalendarService {
         return new AvailableCalendar(availableDates, availableDates.size());
     }
 
-    public void updateCalendar(ReservationDto reservationDto) {
+    public void updateCalendar(ReservationDto dto) {
 
-        long totalDays = DAYS.between(reservationDto.getArrivalDate(), reservationDto.getDepartureDate());
+        if (dto.isCancellation()) {
+            reservationCalendarRepository.deleteByReservationCode(dto.getReservationCode());
+            return;
+        }
+
+        long totalDays = DAYS.between(dto.getArrivalDate(), dto.getDepartureDate());
 
         for (int i = 0; i < totalDays ; i++) {
             ReservationCalendar reservationCalendar = new ReservationCalendar();
-            reservationCalendar.setCalendarDate(reservationDto.getArrivalDate().plusDays(i));
-            reservationCalendar.setReservationCode(reservationDto.getReservationCode());
+            reservationCalendar.setCalendarDate(dto.getArrivalDate().plusDays(i));
+            reservationCalendar.setReservationCode(dto.getReservationCode());
             reservationCalendarRepository.save(reservationCalendar);
         }
     }

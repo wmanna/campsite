@@ -10,6 +10,7 @@ public class ReservationDto {
     private LocalDate departureDate;
     private String userEmailAddress;
     private String userFullName;
+    private boolean cancellation;
 
     public String getReservationCode() {
         return reservationCode;
@@ -25,5 +26,13 @@ public class ReservationDto {
 
     public void setReservationCode(String reservationCode) {
         this.reservationCode = reservationCode;
+    }
+
+    public boolean isCancellation() {
+        return cancellation;
+    }
+
+    public void setCancellation(boolean cancellation) {
+        this.cancellation = cancellation;
     }
 }
