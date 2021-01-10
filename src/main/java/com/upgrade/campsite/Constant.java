@@ -11,6 +11,9 @@ public final class Constant {
     public static final int REQUIRED_RESERVATION_CODE = 4008;
     public static final String REQUIRED_RESERVATION_CODE_MSG = "The reservation code is required.";
 
+    public static final int USER_DATA_REQUIRED_ERROR_CODE = 4010;
+    public static final String USER_DATA_REQUIRED_ERROR_MSG = "User full name and email are required.";
+
     // General Errors
     public static final String RESOURCE_LOCK_NOT_FOUND_MSG = "Resource lock not found.";
     public static final String RESOURCE_LOCKED_MSG = "Locked resource. Try it later.";
