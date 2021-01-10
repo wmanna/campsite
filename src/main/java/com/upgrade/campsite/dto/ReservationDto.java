@@ -35,4 +35,13 @@ public class ReservationDto {
     public void setCancellation(boolean cancellation) {
         this.cancellation = cancellation;
     }
+
+    public String getUserEmailAddress() {
+        return userEmailAddress;
+    }
+
+    public String getUserFullName() {
+        return userFullName;
+    }
+
 }

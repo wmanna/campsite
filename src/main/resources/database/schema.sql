@@ -1,5 +1,12 @@
 CREATE SCHEMA IF NOT EXISTS campsite;
 
+CREATE TABLE IF NOT EXISTS campsite.users (
+    id varchar not null,
+    email varchar not null unique,
+    full_name varchar not null,
+    PRIMARY KEY (id)
+);
+
 CREATE TABLE IF NOT EXISTS campsite.reservations (
     id varchar not null,
     code varchar not null unique,
@@ -7,7 +14,9 @@ CREATE TABLE IF NOT EXISTS campsite.reservations (
     arrival_date timestamp not null,
     departure_date timestamp not null,
     cancellation_date timestamp,
-    PRIMARY KEY (id)
+    user_id varchar not null,
+    PRIMARY KEY (id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE IF NOT EXISTS campsite.resource_locks (

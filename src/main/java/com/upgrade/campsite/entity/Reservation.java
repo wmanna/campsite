@@ -27,6 +27,9 @@ public class Reservation {
     @Column(name = "cancellation_date")
     private LocalDateTime cancellationDate;
 
+    @ManyToOne
+    private User user;
+
     public String getCode() {
         return code;
     }
@@ -49,5 +52,9 @@ public class Reservation {
 
     public void setCancellationDate(LocalDateTime cancellationDate) {
         this.cancellationDate = cancellationDate;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

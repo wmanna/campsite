@@ -31,6 +31,9 @@ public class ReservationService {
     private ReservationRepository reservationRepository;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private CalendarService reservationCalendarService;
 
     @Autowired
@@ -71,6 +74,8 @@ public class ReservationService {
             }
 
             validateDates(dto);
+
+            reservation.setUser(userService.getUser(dto));
 
             reservation.setReservationDate(LocalDateTime.now());
             reservation.setArrivalDate(dto.getArrivalDate().atStartOfDay());
