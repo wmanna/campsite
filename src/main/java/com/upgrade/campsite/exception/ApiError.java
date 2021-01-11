@@ -2,8 +2,8 @@ package com.upgrade.campsite.exception;
 
 public class ApiError {
 
-    private int errorCode;
-    private String errorMessage;
+    private final int errorCode;
+    private final String errorMessage;
 
     public ApiError(int errorCode, String errorMessage) {
         this.errorCode = errorCode;

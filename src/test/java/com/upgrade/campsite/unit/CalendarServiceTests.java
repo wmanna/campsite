@@ -1,6 +1,6 @@
 package com.upgrade.campsite.unit;
 
-import com.upgrade.campsite.dto.AvailableCalendar;
+import com.upgrade.campsite.dto.AvailableCalendarDto;
 import com.upgrade.campsite.entity.ReservationCalendar;
 import com.upgrade.campsite.exception.ApiErrorException;
 import com.upgrade.campsite.repository.ReservationCalendarRepository;
@@ -49,7 +49,7 @@ public class CalendarServiceTests {
     @Test
     void searchAvailableDaysInCalendar() throws ApiErrorException {
 
-        AvailableCalendar availableCalendar = calendarService.search(null, null);
+        AvailableCalendarDto availableCalendar = calendarService.search(null, null);
 
         Assertions.assertEquals(MAX_DAYS, availableCalendar.getAvailableDates().size());
 
@@ -62,7 +62,7 @@ public class CalendarServiceTests {
                 .findByCalendarDateGreaterThanEqualAndCalendarDateLessThanEqual(any(LocalDate.class), any(LocalDate.class)))
                 .thenReturn(notAvailableDates);
 
-        AvailableCalendar availableCalendar = calendarService.search(null, null);
+        AvailableCalendarDto availableCalendar = calendarService.search(null, null);
 
         Assertions.assertEquals(MAX_DAYS - 1, availableCalendar.getAvailableDates().size());
 

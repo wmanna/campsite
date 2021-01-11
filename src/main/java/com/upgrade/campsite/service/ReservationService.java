@@ -1,31 +1,21 @@
 package com.upgrade.campsite.service;
 
-import static java.util.Objects.isNull;
-import static java.time.temporal.ChronoUnit.DAYS;
-
-import com.upgrade.campsite.Constant;
+import com.upgrade.campsite.exception.Constant;
 import com.upgrade.campsite.dto.ReservationDto;
 import com.upgrade.campsite.entity.Reservation;
 import com.upgrade.campsite.entity.ResourceLock;
 import com.upgrade.campsite.exception.ApiErrorException;
 import com.upgrade.campsite.repository.ReservationRepository;
+import com.upgrade.campsite.validator.DatesValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
 public class ReservationService {
-
-    @Value( "${reservation.calendar.max}")
-    private Integer maxDays;
-
-    @Value( "${reservation.calendar.min}")
-    private Integer minDays;
 
     @Autowired
     private ReservationRepository reservationRepository;
@@ -35,6 +25,9 @@ public class ReservationService {
 
     @Autowired
     private CalendarService reservationCalendarService;
+
+    @Autowired
+    private DatesValidator datesValidator;
 
     @Autowired
     private ResourceLockService resourceLockService;
@@ -47,7 +40,7 @@ public class ReservationService {
 
         Reservation reservation = reservationRepository.findByCode(code);
         if (Objects.isNull(reservation)) {
-            throw new ApiErrorException(Constant.RESERVATION_NOT_FOUND_CODE, Constant.RESERVATION_NOT_FOUND_MSG);
+            throw new ApiErrorException(Constant.RESERVATION_NOT_FOUND_ERROR_CODE, Constant.RESERVATION_NOT_FOUND_ERROR_MSG);
         }
 
         return reservation;
@@ -65,25 +58,26 @@ public class ReservationService {
 
         try {
 
-            if (!Objects.isNull(dto.getReservationCode())) { // Modify
-               reservation = getReservationByCode(dto.getReservationCode());
+            if (Objects.isNull(dto.getReservationCode())) {
+                // Create new Reservation
+                reservation = new Reservation();
+                reservation.setCode(getNewReservationCode(dto));
 
             } else {
-                reservation = new Reservation(); // Create new
-                reservation.setCode(getNewReservationCode(dto));
+                // Modify Reservation
+                reservation = getReservationByCode(dto.getReservationCode());
             }
 
-            validateDates(dto);
+            datesValidator.validateDates(dto);
 
             reservation.setUser(userService.getUser(dto));
-
             reservation.setReservationDate(LocalDateTime.now());
             reservation.setArrivalDate(dto.getArrivalDate().atStartOfDay());
             reservation.setDepartureDate(dto.getDepartureDate().atStartOfDay());
 
             reservation = reservationRepository.save(reservation);
 
-            // Update calendar
+            // Update calendar -> Read model synchronization
             dto.setReservationCode(reservation.getCode());
             reservationCalendarService.updateCalendar(dto);
 
@@ -107,45 +101,9 @@ public class ReservationService {
     }
 
     /* Creates a random code for a new reservation.
-     *  Example of generated code: R123-1234568. */
+     *  Example of reservation code: R123-1234568. */
     private String getNewReservationCode(ReservationDto reservationDto) {
         return "R" + new Random().nextInt(1000) + "-" + reservationDto.hashCode();
-    }
-
-    /* Validates consistency between the arrival and departure dates.
-     * It also validates business rules for them and overlapping with other reservations. */
-    private void validateDates(ReservationDto reservationDto) throws ApiErrorException {
-
-        if (isNull(reservationDto.getArrivalDate()) || isNull(reservationDto.getDepartureDate())) {
-            throw new ApiErrorException(4003, "Arrival and departure dates can not be null or empty.");
-        }
-
-        LocalDate today = LocalDate.now();
-
-        if (reservationDto.getArrivalDate().isBefore(today) || DAYS.between(reservationDto.getArrivalDate(), reservationDto.getDepartureDate()) < 1) {
-            throw new ApiErrorException(4006, "Invalid reservation dates.");
-        }
-
-        if (DAYS.between(reservationDto.getArrivalDate(), reservationDto.getDepartureDate()) > 3) {
-            throw new ApiErrorException(4004, "Max. 3 days exceeded.");
-        }
-
-        if (DAYS.between(today, reservationDto.getArrivalDate()) > maxDays) {
-            throw new ApiErrorException(4005, "The arrival date is not available yet.");
-        }
-
-        if (DAYS.between(today, reservationDto.getArrivalDate()) < minDays) {
-            throw new ApiErrorException(4006, "Arrival date requires" + minDays + " + day/s at least for check-in.");
-        }
-
-        if (!findReservationsBetweenDates(reservationDto.getArrivalDate(), reservationDto.getDepartureDate()).isEmpty()) {
-            throw new ApiErrorException(4007, "One or more days are not available.");
-        }
-
-    }
-
-    private List<Reservation> findReservationsBetweenDates(LocalDate beginDate, LocalDate endDate) {
-        return reservationRepository.findByArrivalDateGreaterThanEqualAndArrivalDateLessThanEqualAndCancellationDateIsNullOrDepartureDateGreaterThanEqualAndDepartureDateLessThanEqualAndCancellationDateIsNull(beginDate.atStartOfDay(), beginDate.atStartOfDay(), endDate.atStartOfDay(), endDate.atStartOfDay());
     }
 
 }
