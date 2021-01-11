@@ -22,11 +22,14 @@ To know more about the challenge please go to "Back-end Tech Challenge" section.
 
 ![API Components](doc/api-components.png?raw=true "API Components")
 
+
 ## Entity Model (Class Diagram)
 
 ![Entity Model](doc/uml/class-diagram.svg?raw=true "Entity Model")
 
+
 ## Running this API
+
 
 ### Required
 
