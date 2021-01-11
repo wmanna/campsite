@@ -12,5 +12,5 @@ public interface ReservationRepository extends CrudRepository<Reservation, Strin
 
     Reservation findByCode(String code);
 
-    List<Reservation> findByArrivalDateGreaterThanEqualAndArrivalDateLessThanEqualOrDepartureDateGreaterThanEqualAndDepartureDateLessThanEqual(LocalDateTime arrivalDate1, LocalDateTime departureDate1, LocalDateTime arrivalDate2, LocalDateTime departureDate2);
+    List<Reservation> findByArrivalDateGreaterThanEqualAndArrivalDateLessThanEqualAndCancellationDateIsNullOrDepartureDateGreaterThanEqualAndDepartureDateLessThanEqualAndCancellationDateIsNull(LocalDateTime arrivalDate1, LocalDateTime departureDate1, LocalDateTime arrivalDate2, LocalDateTime departureDate2);
 }

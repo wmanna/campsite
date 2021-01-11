@@ -8,18 +8,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("reservation")
 public class ReservationController {
 
     @Autowired
     private ReservationService campsiteService;
 
-    @PostMapping("/campsite")
+    @PostMapping
     public Reservation bookReservation(@RequestBody ReservationDto reservationDto) throws ApiErrorException {
         return campsiteService.createOrModifyReservation(reservationDto);
     }
 
-    @GetMapping("/campsite/details")
-    public Reservation getReservationDetailsByCode(@RequestParam String code) {
+    @GetMapping
+    public Reservation getReservationDetailsByCode(@RequestParam String code) throws ApiErrorException {
         return campsiteService.getReservationByCode(code);
     }
+
+    @DeleteMapping
+    public void cancelReservation(@RequestBody ReservationDto reservationDto) throws ApiErrorException {
+        campsiteService.cancelReservation(reservationDto);
+    }
+
 }

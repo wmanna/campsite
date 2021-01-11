@@ -24,6 +24,12 @@ public class Reservation {
     @Column(name = "departure_date")
     private LocalDateTime departureDate;
 
+    @Column(name = "cancellation_date")
+    private LocalDateTime cancellationDate;
+
+    @ManyToOne
+    private User user;
+
     public String getCode() {
         return code;
     }
@@ -42,5 +48,13 @@ public class Reservation {
 
     public void setDepartureDate(LocalDateTime departureDate) {
         this.departureDate = departureDate;
+    }
+
+    public void setCancellationDate(LocalDateTime cancellationDate) {
+        this.cancellationDate = cancellationDate;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

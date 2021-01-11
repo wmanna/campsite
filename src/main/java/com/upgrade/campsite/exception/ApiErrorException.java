@@ -2,7 +2,7 @@ package com.upgrade.campsite.exception;
 
 public class ApiErrorException extends Exception {
 
-    private int apiErrorCode;
+    private final int apiErrorCode;
 
     public ApiErrorException(int apiErrorCode, String errorMessage) {
         super(errorMessage);
