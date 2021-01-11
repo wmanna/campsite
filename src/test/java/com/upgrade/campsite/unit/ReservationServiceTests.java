@@ -8,6 +8,7 @@ import com.upgrade.campsite.service.CalendarService;
 import com.upgrade.campsite.service.ReservationService;
 import com.upgrade.campsite.service.ResourceLockService;
 import com.upgrade.campsite.service.UserService;
+import com.upgrade.campsite.validator.DatesValidator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,6 +38,9 @@ public class ReservationServiceTests {
     @Mock
     private CalendarService calendarService;
 
+    @Mock
+    private DatesValidator datesValidator;
+
     @InjectMocks
     private ReservationService reservationService;
 
@@ -51,8 +55,8 @@ public class ReservationServiceTests {
 
         openMocks(this);
 
-        ReflectionTestUtils.setField(reservationService, "minDays", 1);
-        ReflectionTestUtils.setField(reservationService, "maxDays", 30);
+        ReflectionTestUtils.setField(datesValidator, "minDays", 1);
+        ReflectionTestUtils.setField(datesValidator, "maxDays", 30);
 
         // Reservation Entity
         reservationMock = new Reservation();

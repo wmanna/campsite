@@ -1,6 +1,6 @@
 package com.upgrade.campsite.service;
 
-import com.upgrade.campsite.Constant;
+import com.upgrade.campsite.exception.Constant;
 import com.upgrade.campsite.dto.ReservationDto;
 import com.upgrade.campsite.entity.User;
 import com.upgrade.campsite.exception.ApiErrorException;

@@ -1,6 +1,6 @@
 package com.upgrade.campsite.service;
 
-import com.upgrade.campsite.Constant;
+import com.upgrade.campsite.exception.Constant;
 import com.upgrade.campsite.entity.ResourceLock;
 import com.upgrade.campsite.repository.ResourceLockRepository;
 import org.springframework.beans.factory.annotation.Autowired;

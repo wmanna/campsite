@@ -1,6 +1,6 @@
 package com.upgrade.campsite.service;
 
-import com.upgrade.campsite.dto.AvailableCalendar;
+import com.upgrade.campsite.dto.AvailableCalendarDto;
 import com.upgrade.campsite.dto.ReservationDto;
 import com.upgrade.campsite.entity.ReservationCalendar;
 import com.upgrade.campsite.exception.ApiErrorException;
@@ -30,33 +30,27 @@ public class CalendarService {
     @Autowired
     private ReservationCalendarRepository reservationCalendarRepository;
 
-    public AvailableCalendar search(LocalDate startDate, LocalDate endDate) throws ApiErrorException {
-
-        Set<String> availableDates = new TreeSet<>();
+    public AvailableCalendarDto search(LocalDate startDate, LocalDate endDate) {
 
         startDate = !Objects.isNull(startDate) ? startDate : LocalDate.now().plusDays(minDays);
         endDate = !Objects.isNull(endDate) ? endDate : LocalDate.now().plusDays(maxDays);
 
         if (DAYS.between(startDate, endDate) > maxDays) {
-            throw new ApiErrorException(4011, "Search limit exceeded.");
+            endDate = LocalDate.now().plusDays(maxDays);
         }
 
-        // Set with next 30 days.
-        LocalDate calendarDate = startDate;
-        for (int i = 1; i <= DAYS.between(startDate, endDate) + 1; i++) {
-            availableDates.add(calendarDate.toString());
-            calendarDate = calendarDate.plusDays(1);
-        }
+        Set<String> availableDates = getCalendarDaysInARange(startDate, endDate);
 
         // Search unavailable dates.
-        List<ReservationCalendar> calendar = reservationCalendarRepository.findByCalendarDateGreaterThanEqualAndCalendarDateLessThanEqual(startDate, endDate);
+        List<ReservationCalendar> calendar = reservationCalendarRepository
+                .findByCalendarDateGreaterThanEqualAndCalendarDateLessThanEqual(startDate, endDate);
 
         // Remove unavailable dates from set.
         for (ReservationCalendar reservationDate : calendar) {
             availableDates.remove(reservationDate.getCalendarDate().format(DateTimeFormatter.ISO_DATE));
         }
 
-        return new AvailableCalendar(availableDates, availableDates.size());
+        return new AvailableCalendarDto(availableDates, availableDates.size());
     }
 
     public void updateCalendar(ReservationDto dto) {
@@ -75,4 +69,18 @@ public class CalendarService {
             reservationCalendarRepository.save(reservationCalendar);
         }
     }
+
+    private Set<String> getCalendarDaysInARange(LocalDate startDate, LocalDate endDate) {
+
+        Set<String> calendarDays = new TreeSet<>();
+        LocalDate auxLocalDate = startDate;
+
+        for (int i = 1; i <= DAYS.between(startDate, endDate) + 1; i++) {
+            calendarDays.add(auxLocalDate.toString());
+            auxLocalDate = auxLocalDate.plusDays(1);
+        }
+
+        return calendarDays;
+    }
+
 }

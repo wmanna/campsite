@@ -2,9 +2,9 @@ package com.upgrade.campsite.dto;
 
 import java.util.Set;
 
-public class AvailableCalendar {
+public class AvailableCalendarDto {
 
-    public AvailableCalendar(Set<String> availableDates, int availableDatesTotal) {
+    public AvailableCalendarDto(Set<String> availableDates, int availableDatesTotal) {
         this.availableDates = availableDates;
         this.availableDatesTotal = availableDatesTotal;
     }

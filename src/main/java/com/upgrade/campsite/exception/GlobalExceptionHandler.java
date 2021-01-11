@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import javax.persistence.PessimisticLockException;
 
-import com.upgrade.campsite.Constant;
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
