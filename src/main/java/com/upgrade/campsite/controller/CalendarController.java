@@ -1,6 +1,7 @@
 package com.upgrade.campsite.controller;
 
 import com.upgrade.campsite.dto.AvailableCalendar;
+import com.upgrade.campsite.exception.ApiErrorException;
 import com.upgrade.campsite.service.CalendarService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -19,7 +20,7 @@ public class CalendarController {
     @GetMapping("/campsite")
     public AvailableCalendar searchAvailableDates(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) throws ApiErrorException {
         return reservationCalendarService.search(startDate, endDate);
     }
 

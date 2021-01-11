@@ -30,11 +30,6 @@ CREATE TABLE IF NOT EXISTS campsite.reservation_calendar (
     id varchar not null,
     calendar_date date not null unique,
     reservation_code varchar,
-    cancelled boolean,
     PRIMARY KEY (id),
     FOREIGN KEY (reservation_code) REFERENCES reservations(code)
 );
-
-TRUNCATE TABLE campsite.resource_locks;
-
-INSERT INTO campsite.resource_locks(id, locked, lock_timestamp) VALUES('RESERVATION_LOCK', false, now())
