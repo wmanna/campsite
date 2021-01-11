@@ -1,5 +1,85 @@
 # Campsite Challenge (Upgrade)
 
+This solution is inspired CQRS Pattern principles (https://martinfowler.com/bliki/CQRS.html) and uses the following components:
+
+- Spring Boot 2.4.1
+- Maven
+- Postgres
+- Swagger
+
+To know more about the callenge please go to "Back-end Tech Challenge" section.
+
+
+## Required
+
+You should have the following elements properly installed:
+
+- Java 11
+- Maven 3
+- Postgres
+- Git
+
+## Getting started
+
+You can run this project following the next steps:
+
+1- Clone the repo:
+
+```sh
+$ git clone https://github.com/wmanna/campsite.git
+```
+Optionally, [you can download the zip file from this link](https://github.com/wmanna/campsite/archive/main.zip) and then unzip it.
+
+
+2- Create in Postgres a database with name '**campsite**'.
+
+3- Set up the configuration to connect to your database in **application.properties** file, providing url, username and password.
+
+```sh
+$ cd campsite
+$ nano src/main/resources/application.properties
+
+spring.datasource.url=${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5432/campsite}
+spring.datasource.hikari.schema=campsite
+spring.datasource.username=${JDBC_DATABASE_USERNAME:postgres}
+spring.datasource.password=${JDBC_DATABASE_PASSWORD}
+...
+```
+Save the file.
+
+4- Clean and build the project using maven:
+
+```sh
+
+$ mvn clean install
+
+```
+
+If the build finished successfully now you can run the app.
+
+5- Go to maven target directory and run the app with **java -jar** command:
+
+```sh
+$ cd target
+$ java -jar campsite-0.0.1-SNAPSHOT.jar
+```
+
+Now you should see the server logs running the server on default port (8080).
+
+```
+
+
+## API Documentation
+
+To know how to use the API and test the services you can use the generated swagger documentation.
+It is available on: **protocol://domain:port/api-name/swagger-ui.html#/**
+  
+For example, if you are running the app locally on port 8080, you can access to the Swagger UI in your browser:
+
+http://localhost:8080/campsite/swagger-ui/
+
+
+
 ## Back-end Tech Challenge
 
 An underwater volcano formed a new small island in the Pacific Ocean last month. All the conditions on the island seems perfect and it was
