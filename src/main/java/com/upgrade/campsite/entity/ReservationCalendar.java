@@ -17,8 +17,6 @@ public class ReservationCalendar {
     @Column(name = "calendar_date")
     private LocalDate calendarDate;
 
-    private boolean cancelled;
-
     @Column(name = "reservation_code")
     private String reservationCode;
 

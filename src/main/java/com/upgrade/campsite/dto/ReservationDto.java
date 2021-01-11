@@ -44,4 +44,19 @@ public class ReservationDto {
         return userFullName;
     }
 
+    public void setArrivalDate(LocalDate arrivalDate) {
+        this.arrivalDate = arrivalDate;
+    }
+
+    public void setDepartureDate(LocalDate departureDate) {
+        this.departureDate = departureDate;
+    }
+
+    public void setUserEmailAddress(String userEmailAddress) {
+        this.userEmailAddress = userEmailAddress;
+    }
+
+    public void setUserFullName(String userFullName) {
+        this.userFullName = userFullName;
+    }
 }

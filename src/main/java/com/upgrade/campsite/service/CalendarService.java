@@ -3,6 +3,7 @@ package com.upgrade.campsite.service;
 import com.upgrade.campsite.dto.AvailableCalendar;
 import com.upgrade.campsite.dto.ReservationDto;
 import com.upgrade.campsite.entity.ReservationCalendar;
+import com.upgrade.campsite.exception.ApiErrorException;
 import com.upgrade.campsite.repository.ReservationCalendarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,16 +30,20 @@ public class CalendarService {
     @Autowired
     private ReservationCalendarRepository reservationCalendarRepository;
 
-    public AvailableCalendar search(LocalDate startDate, LocalDate endDate) {
+    public AvailableCalendar search(LocalDate startDate, LocalDate endDate) throws ApiErrorException {
 
         Set<String> availableDates = new TreeSet<>();
 
         startDate = !Objects.isNull(startDate) ? startDate : LocalDate.now().plusDays(minDays);
         endDate = !Objects.isNull(endDate) ? endDate : LocalDate.now().plusDays(maxDays);
 
+        if (DAYS.between(startDate, endDate) > maxDays) {
+            throw new ApiErrorException(4011, "Search limit exceeded.");
+        }
+
         // Set with next 30 days.
         LocalDate calendarDate = startDate;
-        for (int i = 1; i <= maxDays; i++) {
+        for (int i = 1; i <= DAYS.between(startDate, endDate) + 1; i++) {
             availableDates.add(calendarDate.toString());
             calendarDate = calendarDate.plusDays(1);
         }
