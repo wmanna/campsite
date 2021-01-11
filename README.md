@@ -1,16 +1,34 @@
 # Campsite Challenge (Upgrade)
 
-This solution is inspired CQRS Pattern principles (https://martinfowler.com/bliki/CQRS.html) and uses the following components:
+This solution is inspired by CQRS Pattern principles (https://martinfowler.com/bliki/CQRS.html)
+
+Features:
+
+- High performance model for queries.
+- Independent models (query - command).
+- High consistency and concurrency control even in a multiple instances environment.
+- Synchronous data updates.
+ 
+This API was developed with the following components:
 
 - Spring Boot 2.4.1
-- Maven
+- Maven 4
 - Postgres
 - Swagger
 
-To know more about the callenge please go to "Back-end Tech Challenge" section.
+To know more about the challenge please go to "Back-end Tech Challenge" section.
 
+## API Components
 
-## Required
+![API Components](doc/api-components.png?raw=true "API Components")
+
+## Entity Model (Class Diagram)
+
+![Entity Model](doc/uml/class-diagram.svg?raw=true "Entity Model")
+
+## Running this API
+
+### Required
 
 You should have the following elements properly installed:
 
@@ -31,7 +49,7 @@ $ git clone https://github.com/wmanna/campsite.git
 Optionally, [you can download the zip file from this link](https://github.com/wmanna/campsite/archive/main.zip) and then unzip it.
 
 
-2- Create in Postgres a database with name '**campsite**'.
+2- Create in Postgres a schema with name '**campsite**'.
 
 3- Set up the configuration to connect to your database in **application.properties** file, providing url, username and password.
 
