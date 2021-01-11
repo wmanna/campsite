@@ -1,0 +1,32 @@
+@startuml
+
+class Reservation {
+  -id : String
+  -code : String
+  -reservationDate : LocalDateTime
+  -arrivalDate : LocalDateTime
+  -departureDate : LocalDateTime
+  -cancellationDate : LocalDateTime
+}
+
+class User {
+  -id : String
+  -email : String
+  -fullName : String
+}
+
+class ReservationCalendar {
+  -id : String
+  -calendarDate : LocalDate
+  -reservationCode : String
+}
+
+class ResourceLock {
+  -id : String
+  -isLocked : boolean
+  -lockTimestamp : LocalDateTime
+}
+
+Reservation "*" -- "1" User
+
+@enduml
