@@ -8,6 +8,7 @@ import com.upgrade.campsite.service.CalendarService;
 import com.upgrade.campsite.service.ReservationService;
 import com.upgrade.campsite.service.ResourceLockService;
 import com.upgrade.campsite.service.UserService;
+import com.upgrade.campsite.service.notification.NotificationService;
 import com.upgrade.campsite.validator.DatesValidator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +21,7 @@ import static org.mockito.ArgumentMatchers.any;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.openMocks;
@@ -40,6 +42,9 @@ public class ReservationServiceTests {
 
     @Mock
     private DatesValidator datesValidator;
+
+    @Mock
+    private List<NotificationService> notificationService;
 
     @InjectMocks
     private ReservationService reservationService;
@@ -76,7 +81,7 @@ public class ReservationServiceTests {
 
         when(reservationRepository.save(any(Reservation.class))).thenReturn(reservationMock);
 
-        Assertions.assertEquals(RESERVATION_CODE, reservationService.createOrModifyReservation(reservationDto).getCode());
+        Assertions.assertEquals(RESERVATION_CODE, reservationService.createOrModifyReservationAndNotifyUser(reservationDto).getCode());
 
         Assertions.assertNotNull(reservationMock.getCode());
 

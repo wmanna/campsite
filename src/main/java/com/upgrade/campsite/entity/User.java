@@ -3,6 +3,8 @@ package com.upgrade.campsite.entity;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -15,6 +17,8 @@ public class User {
     private String email;
     @Column(name = "full_name")
     private String fullName;
+    @ElementCollection
+    private List<String> preferences = new ArrayList<>();
 
     public User() {
     }
@@ -30,5 +34,13 @@ public class User {
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
+    }
+
+    public List<String> getPreferences() {
+        return preferences;
+    }
+
+    public void setPreferences(List<String> preferences) {
+        this.preferences = preferences;
     }
 }

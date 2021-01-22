@@ -7,6 +7,12 @@ CREATE TABLE IF NOT EXISTS campsite.users (
     PRIMARY KEY (id)
 );
 
+CREATE TABLE IF NOT EXISTS campsite.user_preferences (
+     user_id varchar not null,
+     preferences varchar not null,
+     PRIMARY KEY(user_id, preferences)
+);
+
 CREATE TABLE IF NOT EXISTS campsite.reservations (
     id varchar not null,
     code varchar not null unique,

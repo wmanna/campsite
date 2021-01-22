@@ -1,6 +1,11 @@
 package com.upgrade.campsite.dto;
 
+import com.upgrade.campsite.service.notification.NotificationService;
+
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class ReservationDto {
 
@@ -10,7 +15,14 @@ public class ReservationDto {
     private LocalDate departureDate;
     private String userEmailAddress;
     private String userFullName;
+    private List<String> userPreferences;
     private boolean cancellation;
+
+    public ReservationDto() {
+        // Default preferences
+        userPreferences = new ArrayList<>(
+                Collections.singletonList(NotificationService.DEFAULT_NOTIFICATION_SERVICE));
+    }
 
     public String getReservationCode() {
         return reservationCode;
@@ -58,5 +70,9 @@ public class ReservationDto {
 
     public void setUserFullName(String userFullName) {
         this.userFullName = userFullName;
+    }
+
+    public List<String> getUserPreferences() {
+        return userPreferences;
     }
 }

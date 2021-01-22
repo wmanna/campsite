@@ -6,6 +6,7 @@ import com.upgrade.campsite.entity.Reservation;
 import com.upgrade.campsite.entity.ResourceLock;
 import com.upgrade.campsite.exception.ApiErrorException;
 import com.upgrade.campsite.repository.ReservationRepository;
+import com.upgrade.campsite.service.notification.NotificationService;
 import com.upgrade.campsite.validator.DatesValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,9 @@ public class ReservationService {
     @Autowired
     private ResourceLockService resourceLockService;
 
+    @Autowired
+    private List<NotificationService> notificationService;
+
     public Reservation getReservationByCode(String code) throws ApiErrorException {
 
         if (Objects.isNull(code)) {
@@ -46,48 +50,55 @@ public class ReservationService {
         return reservation;
     }
 
-    /* Creates or modify a reservation and returns a Reservation entity that contains the code.
-     * It uses an exclusive resource lock. */
-    @Transactional(rollbackFor = Exception.class)
-    public Reservation createOrModifyReservation(ReservationDto dto) throws ApiErrorException {
-
-        // TODO: Use aspects to acquire/release lock.
-        ResourceLock lock = resourceLockService.acquireLock();
+    /* Creates or modify a reservation and returns a Reservation entity that contains the code. */
+    @Transactional(rollbackFor = Exception.class, timeout = 10)
+    private Reservation createOrModifyReservation(ReservationDto dto) throws ApiErrorException {
 
         Reservation reservation;
 
+        if (Objects.isNull(dto.getReservationCode())) {
+            // Create new Reservation
+            reservation = new Reservation();
+            reservation.setCode(getNewReservationCode(dto));
+
+        } else {
+            // Modify Reservation
+            reservation = getReservationByCode(dto.getReservationCode());
+        }
+
+        datesValidator.validateDates(dto);
+
+        reservation.setUser(userService.getUser(dto));
+        reservation.setReservationDate(LocalDateTime.now());
+        reservation.setArrivalDate(dto.getArrivalDate().atStartOfDay());
+        reservation.setDepartureDate(dto.getDepartureDate().atStartOfDay());
+
+        reservation = reservationRepository.save(reservation);
+
+        // Update calendar -> Read model synchronization
+        dto.setReservationCode(reservation.getCode());
+        reservationCalendarService.updateCalendar(dto);
+
+        return reservation;
+
+    }
+
+    /* Creates or modify a reservation and returns a Reservation using exclusive lock and then notify user. */
+    public Reservation createOrModifyReservationAndNotifyUser(ReservationDto dto) throws ApiErrorException {
+
+        ResourceLock lock = null;
+
         try {
-
-            if (Objects.isNull(dto.getReservationCode())) {
-                // Create new Reservation
-                reservation = new Reservation();
-                reservation.setCode(getNewReservationCode(dto));
-
-            } else {
-                // Modify Reservation
-                reservation = getReservationByCode(dto.getReservationCode());
-            }
-
-            datesValidator.validateDates(dto);
-
-            reservation.setUser(userService.getUser(dto));
-            reservation.setReservationDate(LocalDateTime.now());
-            reservation.setArrivalDate(dto.getArrivalDate().atStartOfDay());
-            reservation.setDepartureDate(dto.getDepartureDate().atStartOfDay());
-
-            reservation = reservationRepository.save(reservation);
-
-            // Update calendar -> Read model synchronization
-            dto.setReservationCode(reservation.getCode());
-            reservationCalendarService.updateCalendar(dto);
-
+            lock = resourceLockService.acquireLock();
+            Reservation reservation = createOrModifyReservation(dto);
+            notificationService.forEach(n -> n.notifyUser(dto));
             return reservation;
-
         } finally {
             resourceLockService.release(lock);
         }
 
     }
+
 
     @Transactional(rollbackFor = Exception.class)
     public void cancelReservation(ReservationDto dto) throws ApiErrorException {

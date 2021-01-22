@@ -38,6 +38,7 @@ public class UserService {
         }
 
         User user = new User(dto.getUserEmailAddress(), dto.getUserFullName());
+        user.setPreferences(dto.getUserPreferences());
         return userRepository.save(user);
     }
 
