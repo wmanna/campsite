@@ -52,7 +52,7 @@ $ git clone https://github.com/wmanna/campsite.git
 Optionally, [you can download the zip file from this link](https://github.com/wmanna/campsite/archive/main.zip) and then unzip it.
 
 
-2- Create in Postgres a schema with name '**campsite**'.
+2- Create in Postgres a DATABASE with name '**campsite**'.
 
 3- Set up the configuration to connect to your database in **application.properties** file, providing url, username and password.
 
