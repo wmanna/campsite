@@ -8,6 +8,7 @@ import com.upgrade.campsite.service.CalendarService;
 import com.upgrade.campsite.service.ReservationService;
 import com.upgrade.campsite.service.ResourceLockService;
 import com.upgrade.campsite.service.UserService;
+import com.upgrade.campsite.service.notification.NotificationService;
 import com.upgrade.campsite.validator.DatesValidator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +20,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -42,6 +44,9 @@ public class IntegrationTests {
 
     @Mock
     private DatesValidator datesValidator;
+
+    @Mock
+    private List<NotificationService> notificationService;
 
     @InjectMocks
     private ReservationService reservationService;
@@ -70,7 +75,7 @@ public class IntegrationTests {
     void createNewReservationIntegrationTest() throws ApiErrorException {
 
         // 1) Create new reservation.
-        String reservationCode = reservationService.createOrModifyReservation(reservationDto).getCode();
+        String reservationCode = reservationService.createOrModifyReservationAndNotifyUser(reservationDto).getCode();
 
         Assertions.assertNotNull(reservationCode);
 

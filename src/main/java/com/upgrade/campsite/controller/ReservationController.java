@@ -16,7 +16,7 @@ public class ReservationController {
 
     @PostMapping
     public Reservation bookReservation(@RequestBody ReservationDto reservationDto) throws ApiErrorException {
-        return campsiteService.createOrModifyReservation(reservationDto);
+        return campsiteService.createOrModifyReservationAndNotifyUser(reservationDto);
     }
 
     @GetMapping
